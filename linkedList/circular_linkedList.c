@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   doubly_linkedList.c                                :+:      :+:    :+:   */
+/*   circular_linkedList.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ajaidi <ajaidi@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/18 00:21:01 by ajaidi            #+#    #+#             */
-/*   Updated: 2022/03/18 01:02:16 by ajaidi           ###   ########.fr       */
+/*   Updated: 2022/03/18 01:11:25 by ajaidi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,9 +30,9 @@ t_list	*new_node(int data)
 	t_list	*tmp;
 
 	tmp = malloc(sizeof(t_list));
-	tmp->prev = NULL;
+	tmp->prev = tmp;
 	tmp->data = data;
-	tmp->next = NULL;
+	tmp->next = tmp;
 	return (tmp);
 }
 
@@ -47,8 +47,9 @@ void	append_in_end(t_list **root, int data)
 	else
 	{
 		p = *root;
-		while (p->next)
+		while (p != (*root)->prev)
 			p = p->next;
+		tmp->next = *root;
 		p->next = tmp;
 		tmp->prev = p;
 	}
@@ -70,11 +71,12 @@ void	display_node(t_list *root)
 	{
 		while (temp->next)
 			temp = temp->next;
-		while(temp)
+		while(temp != root->prev)
 		{
 			printf("%d\n", temp->data);
  			temp = temp->prev;
 		}
+		printf("%d\n", temp->data);
 	}
 }
 
@@ -87,12 +89,12 @@ int	find_len(t_list *root)
 
 	c = 0;
 	p = root;
-	while (p)
+	while (p != p->prev)
 	{
 		p = p->next;
 		c++;
 	}
-	return (c);
+	return (++c);
 }
 
 /*
@@ -109,6 +111,8 @@ void	append_start(t_list	**root, int data)
 		*root = tmp;
 	else
 	{
+		//////////// here ///////////
+		tmp->prev = (*root)->prev;
 		(*root)->prev = tmp;
 		tmp->next = *root;
 		*root = tmp;
