@@ -6,13 +6,14 @@
 /*   By: ajaidi <ajaidi@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/18 00:21:01 by ajaidi            #+#    #+#             */
-/*   Updated: 2022/03/18 01:11:25 by ajaidi           ###   ########.fr       */
+/*   Updated: 2022/03/18 23:05:04 by ajaidi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 /*
 	First we need to create  a structure
 	Type of next pointer
@@ -46,10 +47,9 @@ void	append_in_end(t_list **root, int data)
 		*root = tmp;
 	else
 	{
-		p = *root;
-		while (p != (*root)->prev)
-			p = p->next;
+		p = (*root)->prev;
 		tmp->next = *root;
+		(*root)->prev = tmp;
 		p->next = tmp;
 		tmp->prev = p;
 	}
@@ -69,14 +69,15 @@ void	display_node(t_list *root)
 		printf("List is empty\n");
 	else
 	{
-		while (temp->next)
-			temp = temp->next;
+		printf("tmp is %d\n", root->data);
+		printf("tmp is %d\n", root->prev->data);
 		while(temp != root->prev)
 		{
 			printf("%d\n", temp->data);
- 			temp = temp->prev;
+ 			temp = temp->next;
+			usleep(500000);
 		}
-		printf("%d\n", temp->data);
+		//printf("%d\n", temp->data);
 	}
 }
 
@@ -89,11 +90,12 @@ int	find_len(t_list *root)
 
 	c = 0;
 	p = root;
-	while (p != p->prev)
+	while (p != root->prev)
 	{
 		p = p->next;
 		c++;
 	}
+	printf("c = %d\n", c);
 	return (++c);
 }
 
@@ -111,10 +113,10 @@ void	append_start(t_list	**root, int data)
 		*root = tmp;
 	else
 	{
-		//////////// here ///////////
 		tmp->prev = (*root)->prev;
 		(*root)->prev = tmp;
 		tmp->next = *root;
+		(*root)->prev->next = tmp;
 		*root = tmp;
 	}
 }
@@ -126,16 +128,16 @@ void	append_nth(t_list **top, int data, int nth)
 	int		i;
 
 	node = new_node(data);
-	if (!(*top) || nth == 1)
+	if (!(*top) || nth <= 1)
 	{
-		node->next = (*top);
-		(*top)->prev = node;
-		*top = node;
+		append_start(top, data);
 		return ;
 	}
+	if (nth >= find_len(*top))
+		return (append_in_end(top, data));
 	tmp = *top;
 	i = -1;
-	while (++i < nth - 2 && tmp->next)
+	while (++i < nth - 2)
 		tmp = tmp->next;
 	node->next = tmp->next;
 	tmp->next->prev = node;
@@ -155,7 +157,8 @@ void	delete_nth(t_list **root, int n)
 	else if (n == 1)
 	{
 		*root = tmp->next;
-		tmp->next->prev = NULL;
+		tmp->next->prev = (*root)->prev;
+		(*root)->prev->next = tmp->next;
 		return (free(tmp));
 	}
 	i = -1;
@@ -230,13 +233,23 @@ int	main(void)
 	t_list	*a;
 
 	a = NULL;
-	for (int i = 0; i < 10; i++)
-		append_in_end(&a, i);
+	// for (int i = 0; i < 10; i++)
+	// 	append_in_end(&a, i);
+	//  append_in_end(&a, 10);
 	append_start(&a, -1);
-	append_nth(&a, -2, 4);
-	delete_nth(&a, 5);
+	append_start(&a, -2);
+	// append_start(&a, -2);
+	// append_start(&a, -2);
+	// append_in_end(&a, 11);
+	// append_start(&a, -3);
+	// append_in_end(&a, 12);
+	//append_nth(&a, 90, 122);
+	// append_nth(&a, 91, 122);
+	// append_nth(&a, 92, 122);
+	//append_nth(&a, 93, 2);
+	//delete_nth(&a, 5);
 	//reverse_iterate_linkedlist(&a);
-	reverse_recursion_linkedlist(&a, a);
+	//reverse_recursion_linkedlist(&a, a);
 	display_node(a);
 	//delete_nth(&a, 4);
 	//display_node_reversed_recursion(a);
