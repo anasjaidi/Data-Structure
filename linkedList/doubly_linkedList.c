@@ -6,7 +6,7 @@
 /*   By: ajaidi <ajaidi@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/18 00:21:01 by ajaidi            #+#    #+#             */
-/*   Updated: 2022/03/18 01:02:16 by ajaidi           ###   ########.fr       */
+/*   Updated: 2022/03/19 20:05:30 by ajaidi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -221,6 +221,14 @@ void	reverse_recursion_linkedlist(t_list **head, t_list *node)
 	node->next = NULL;
 }
 
+void	clr_lst(t_list **root, t_list *node)
+{
+	if (node == NULL)
+		return ;
+	clr_lst(root, node->next);
+	free(node);
+}
+
 int	main(void)
 {
 	t_list	*a;
@@ -230,10 +238,12 @@ int	main(void)
 		append_in_end(&a, i);
 	append_start(&a, -1);
 	append_nth(&a, -2, 4);
+	append_nth(&a, -3, 9);
 	delete_nth(&a, 5);
 	//reverse_iterate_linkedlist(&a);
 	reverse_recursion_linkedlist(&a, a);
 	display_node(a);
+	clr_lst(&a, a);
 	//delete_nth(&a, 4);
 	//display_node_reversed_recursion(a);
 	//printf("%d\n", find_len(a));
